@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanjay Kumar M | Full-Stack Developer & Software Engineer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js for 3D Rounded Humanoid Robot & Background Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        darkBg: '#080c14',
+                        cardBg: '#0f172a',
+                        cardBorder: '#1e293b',
+                        accentBlue: '#3b82f6',
+                        accentCyan: '#06b6d4',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        /* Gradient Text glow effect */
+        .glow-text {
+            text-shadow: 0 0 25px rgba(6, 182, 212, 0.45);
+        }
+
+        /* Glassmorphism elements */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-nav {
+            background: rgba(8, 12, 20, 0.85);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Preloader letter animation styling */
+        .name-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .name-letter.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-gray-200 font-sans antialiased selection:bg-accentCyan selection:text-black relative min-h-screen overflow-x-hidden">
+
+    <!-- STEP-BY-STEP PROFESSIONAL PRELOADER SCREEN -->
+    <div id="preloader" class="fixed inset-0 z-[100] bg-[#050811] flex flex-col items-center justify-center p-6 transition-all duration-700 ease-in-out">
+        <!-- Ambient Radial Glow behind loader -->
+        <div class="absolute w-96 h-96 rounded-full bg-cyan-500/10 blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 relative z-10">
+            <!-- Brand Badge Icon -->
+            <div id="loader-logo" class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-accentBlue via-accentCyan to-teal-400 flex items-center justify-center text-black font-extrabold text-2xl shadow-xl shadow-cyan-500/20 transform transition-all duration-500 opacity-0 scale-75">
+                S
+            </div>
+
+            <!-- Animated Step-by-Step Name Display -->
+            <div class="space-y-2">
+                <div id="name-container" class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white min-h-[3.5rem] flex items-center justify-center flex-wrap gap-[0.1em] sm:gap-[0.15em] font-sans">
+                    <!-- Name letters injected dynamically via JS -->
+                </div>
+                <p id="loader-role" class="text-sm sm:text-base font-mono text-cyan-400 opacity-0 transition-opacity duration-500 tracking-wider">
+                    &lt;Full-Stack Developer &amp; Software Developer /&gt;
+                </p>
+            </div>
+
+            <!-- Loading Bar & Status Indicators -->
+            <div class="w-full max-w-md space-y-3 pt-2">
+                <!-- Status Row -->
+                <div class="flex justify-between items-center text-xs font-mono text-gray-400 px-1">
+                    <span id="loader-status-text" class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                        Initializing workspace...
+                    </span>
+                    <span id="loader-percentage" class="text-cyan-400 font-bold">0%</span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full h-2 bg-slate-900 border border-slate-800 rounded-full overflow-hidden p-0.5">
+                    <div id="loader-bar" class="h-full bg-gradient-to-r from-accentBlue via-accentCyan to-teal-400 rounded-full w-0 transition-all duration-200 ease-out shadow-sm shadow-cyan-500/50"></div>
+                </div>
+            </div>
+
+            <!-- Step Progress Indicator Nodes -->
+            <div id="loader-steps" class="flex items-center gap-6 text-xs text-gray-500 font-mono pt-1 opacity-0 transition-opacity duration-500">
+                <span id="step-1" class="flex items-center gap-1.5 transition-colors duration-300">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Profile
+                </span>
+                <span id="step-2" class="flex items-center gap-1.5 transition-colors duration-300">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 3D Engine
+                </span>
+                <span id="step-3" class="flex items-center gap-1.5 transition-colors duration-300">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Modules
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Canvas Background for Particle Physics & Energy Sparks -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 w-full h-full"></canvas>
+    
+    <!-- Background Glow Orbs -->
+    <div class="fixed top-[-10%] left-[-10%] w-[550px] h-[550px] rounded-full bg-blue-600/15 blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[550px] h-[550px] rounded-full bg-cyan-500/15 blur-[140px] pointer-events-none z-0"></div>
+
+    <!-- Header / Sticky Navigation -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accentBlue via-accentCyan to-teal-400 flex items-center justify-center text-black font-extrabold text-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-300">
+                    S
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-lg tracking-tight text-white group-hover:text-cyan-400 transition-colors">Sanjay Kumar M</span>
+                    <span class="text-xs font-mono text-cyan-400">&lt;FullStackDev /&gt;</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-1 font-medium text-sm text-gray-300">
+                <a href="#about" class="nav-link px-4 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-all">About</a>
+                <a href="#skills" class="nav-link px-4 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-all">Skills</a>
+                <a href="#projects" class="nav-link px-4 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-all">Projects</a>
+                <a href="#experience" class="nav-link px-4 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-all">Experience</a>
+                <a href="#education" class="nav-link px-4 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-all">Education</a>
+                <a href="#certifications" class="nav-link px-4 py-2 rounded-lg hover:text-white hover:bg-white/5 transition-all">Certifications</a>
+            </nav>
+
+            <!-- Action Button & Mobile Toggle -->
+            <div class="flex items-center gap-4">
+                <a href="#contact" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-medium text-sm text-black bg-gradient-to-r from-accentCyan to-accentBlue hover:opacity-95 transition-all shadow-lg shadow-cyan-500/20">
+                    Contact Me
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg bg-gray-900 text-gray-300 hover:text-white focus:outline-none border border-gray-800">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-800 bg-cardBg px-6 py-6 space-y-3">
+            <a href="#about" class="mobile-link block py-2 text-gray-300 hover:text-cyan-400 font-medium">About</a>
+            <a href="#skills" class="mobile-link block py-2 text-gray-300 hover:text-cyan-400 font-medium">Skills</a>
+            <a href="#projects" class="mobile-link block py-2 text-gray-300 hover:text-cyan-400 font-medium">Projects</a>
+            <a href="#experience" class="mobile-link block py-2 text-gray-300 hover:text-cyan-400 font-medium">Experience</a>
+            <a href="#education" class="mobile-link block py-2 text-gray-300 hover:text-cyan-400 font-medium">Education</a>
+            <a href="#certifications" class="mobile-link block py-2 text-gray-300 hover:text-cyan-400 font-medium">Certifications</a>
+            <a href="#contact" class="mobile-link block py-2.5 text-center text-black font-semibold bg-gradient-to-r from-accentCyan to-accentBlue rounded-xl">Contact Me</a>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 space-y-28 mb-20">
+
+        <!-- HERO SECTION WITH FULL-BODY ROUNDED 3D ROBOT -->
+        <section id="hero" class="min-h-[88vh] flex flex-col justify-center pt-6 sm:pt-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Left Details Column -->
+                <div class="lg:col-span-7 space-y-6 z-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs sm:text-sm font-mono">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                        Available for Full-Stack Developer Roles
+                    </div>
+
+                    <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                        Hi, I'm <span class="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent glow-text">Sanjay Kumar M</span>
+                    </h1>
+
+                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-300">
+                        Full-Stack Developer & Software Developer
+                    </h2>
+
+                    <p class="text-gray-400 text-base sm:text-lg leading-relaxed max-w-2xl">
+                        I build scalable, database-driven web applications and secure backend systems with a focus on clean architecture, robust Role-Based Access Control (RBAC), and smooth user experiences.
+                    </p>
+
+                    <!-- Contact Metadata Badges -->
+                    <div class="flex flex-wrap gap-3 text-xs sm:text-sm text-gray-400 font-medium pt-1">
+                        <div class="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-xl">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-cyan-400"></i>
+                            Mysuru, Karnataka, India
+                        </div>
+                        <a href="tel:+918660057906" class="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-xl hover:border-cyan-500/50 hover:text-white transition-colors">
+                            <i data-lucide="phone" class="w-4 h-4 text-cyan-400"></i>
+                            +91 86600 57906
+                        </a>
+                        <a href="mailto:sanjaykumarmm28@gmail.com" class="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-xl hover:border-cyan-500/50 hover:text-white transition-colors">
+                            <i data-lucide="mail" class="w-4 h-4 text-cyan-400"></i>
+                            sanjaykumarmm28@gmail.com
+                        </a>
+                    </div>
+
+                    <!-- Call to Actions & Social Links -->
+                    <div class="flex flex-wrap items-center gap-4 pt-3">
+                        <a href="#projects" class="px-7 py-3.5 rounded-xl font-semibold text-sm text-black bg-gradient-to-r from-accentCyan to-accentBlue hover:shadow-lg hover:shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+                            View My Projects
+                        </a>
+                        <a href="#contact" class="px-7 py-3.5 rounded-xl font-semibold text-sm text-gray-200 bg-slate-900 border border-slate-700 hover:bg-slate-800 hover:border-slate-600 transition-all">
+                            Get In Touch
+                        </a>
+
+                        <!-- Social Icons -->
+                        <div class="flex items-center gap-3 pl-2">
+                            <a href="https://github.com/sanjaykumar28-pixel" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-gray-300 hover:text-white hover:border-cyan-500/50 hover:bg-slate-800 transition-all" title="GitHub Profile">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="https://linkedin.com/in/sanjaykumarm28" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-gray-300 hover:text-white hover:border-cyan-500/50 hover:bg-slate-800 transition-all" title="LinkedIn Profile">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right 3D Rounded Full-Body Humanoid Robot Canvas -->
+                <div class="lg:col-span-5 relative flex flex-col items-center justify-center min-h-[480px] sm:min-h-[520px]">
+                    <div id="robot-3d-container" class="w-full h-[480px] sm:h-[520px] relative cursor-grab active:cursor-grabbing"></div>
+
+                    <!-- Overlay Controls Indicator -->
+                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/70 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-800 flex items-center gap-3 text-xs text-gray-400 pointer-events-none whitespace-nowrap shadow-xl">
+                        <span class="flex items-center gap-1.5 font-mono text-cyan-400">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                            3D Glossy Humanoid
+                        </span>
+                        <span class="text-[11px] text-gray-400 font-sans">Move cursor to rotate & interact</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT ME SECTION -->
+        <section id="about" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-cyan-500/10 text-cyan-400">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">About Me</h2>
+                    <p class="text-sm text-gray-400">Background, academic pursuits & core development philosophy</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main Biography -->
+                <div class="lg:col-span-2 glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-4">
+                    <p class="text-gray-300 text-base leading-relaxed">
+                        I am currently pursuing my <strong class="text-white">Master of Computer Applications (MCA)</strong> at <span class="text-cyan-400">Maharaja Institute of Technology, Mysore</span>.
+                    </p>
+                    <p class="text-gray-300 text-base leading-relaxed">
+                        My expertise spans full-stack software development with strong emphasis on backend architecture using <strong class="text-white">Python, FastAPI, and Flask</strong>, combined with interactive frontend interfaces built with <strong class="text-white">Angular, JavaScript, HTML5, and CSS3</strong>. I have extensive hands-on experience designing relational database schemas using <strong class="text-white">PostgreSQL and MySQL</strong>, as well as developing robust role-based access control (RBAC) mechanisms.
+                    </p>
+                    
+                </div>
+
+                <!-- Highlights Quick Info -->
+                <div class="space-y-4">
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400">
+                                <i data-lucide="code-2" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="font-semibold text-white">Core Competencies</h3>
+                        </div>
+                        <p class="text-sm text-gray-400">Full-Stack Web Developer, REST API Design, RBAC Authentication, Database Architecture.</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="font-semibold text-white">Languages Known</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-gray-300 border border-slate-700">English (Professional)</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-gray-300 border border-slate-700">Kannada (Native)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECHNICAL SKILLS SECTION -->
+        <section id="skills" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-blue-500/10 text-blue-400">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Technical Skills</h2>
+                    <p class="text-sm text-gray-400">Comprehensive tech stack and development tools</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Programming Languages -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/40 transition-colors group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="terminal" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-white">Programming Languages</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-cyan-300 hover:border-cyan-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-cyan-400"></i> Python
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-yellow-300 hover:border-yellow-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-yellow-400"></i> JavaScript
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-indigo-300 hover:border-indigo-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-400"></i> PHP
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Frontend Technologies -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 hover:border-blue-500/40 transition-colors group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="layout" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-white">Frontend Technologies</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-red-300 hover:border-red-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-red-400"></i> HTML5
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-blue-300 hover:border-blue-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-blue-400"></i> CSS3
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-red-400 hover:border-red-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-red-400"></i> Angular
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-yellow-300 hover:border-yellow-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-yellow-400"></i> JavaScript
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Backend Frameworks -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition-colors group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="server" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-white">Backend Frameworks</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-emerald-300 hover:border-emerald-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> FastAPI
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-gray-200 hover:border-gray-400 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-gray-400"></i> Flask
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-blue-300 hover:border-blue-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-blue-400"></i> Python
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Databases -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/40 transition-colors group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-white">Databases</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-blue-300 hover:border-blue-400 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-blue-400"></i> PostgreSQL
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-orange-300 hover:border-orange-400 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-orange-400"></i> MySQL
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tools & Platforms -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 hover:border-purple-500/40 transition-colors group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="wrench" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-white">Tools & Platforms</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-orange-300 hover:border-orange-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-orange-400"></i> Git
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-gray-200 hover:border-gray-400 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-gray-400"></i> GitHub
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-blue-300 hover:border-blue-400 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-blue-400"></i> VS Code
+                        </span>
+                    </div>
+                </div>
+
+                <!-- API Testing -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 hover:border-amber-500/40 transition-colors group">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="network" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-white">API Dev & Testing</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-orange-300 hover:border-orange-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-orange-400"></i> Postman
+                        </span>
+                        <span class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-800 text-green-300 hover:border-green-500 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-400"></i> Swagger API
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURED PROJECTS SECTION -->
+        <section id="projects" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-indigo-500/10 text-indigo-400">
+                    <i data-lucide="folder-git-2" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Featured Projects</h2>
+                    <p class="text-sm text-gray-400">Key software engineering projects built during degree programs</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Project 1: Digital Court Service Platform -->
+                <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden hover:border-cyan-500/40 transition-all flex flex-col justify-between group">
+                    <div class="p-6 sm:p-8 space-y-5">
+                        <div class="flex justify-between items-start">
+                            <span class="px-3 py-1 rounded-full text-xs font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">Full-Stack Platform</span>
+                            <a href="https://github.com/sanjaykumar28-pixel" target="_blank" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-gray-400 hover:text-white transition-colors">
+                                <i data-lucide="github" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+
+                        <h3 class="text-xl sm:text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                            Digital Court Service Platform
+                        </h3>
+
+                        <p class="text-gray-400 text-sm sm:text-base leading-relaxed">
+                            Developed a full-stack web application to digitize and streamline court case documentation, hearing scheduling, and record management workflows.
+                        </p>
+
+                        <!-- Tech Badges -->
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-cyan-300 border border-slate-800">Python</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-emerald-300 border border-slate-800">FastAPI</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-red-300 border border-slate-800">Angular</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-blue-300 border border-slate-800">PostgreSQL</span>
+                        </div>
+
+                        <!-- Highlights -->
+                        <div class="space-y-2 pt-2">
+                            <h4 class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Key Technical Highlights</h4>
+                            <ul class="space-y-2 text-xs sm:text-sm text-gray-400">
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"></i>
+                                    <span>Implemented secure authentication and authorization with role-based access control (RBAC) for advocates, clients, and administrators.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="calendar" class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"></i>
+                                    <span>Developed case registration, hearing scheduling, and real-time case status tracking features.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="database" class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"></i>
+                                    <span>Engineered centralized database management using PostgreSQL for fast querying and secure record storage.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-900/60 border-t border-slate-800 text-xs text-gray-400 flex items-center justify-between">
+                        <span>FastAPI Backend + Angular Frontend</span>
+                        <span class="text-cyan-400 font-mono text-[11px]">Primary Project</span>
+                    </div>
+                </div>
+
+                <!-- Project 2: Learning Management System -->
+                <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden hover:border-blue-500/40 transition-all flex flex-col justify-between group">
+                    <div class="p-6 sm:p-8 space-y-5">
+                        <div class="flex justify-between items-start">
+                            <span class="px-3 py-1 rounded-full text-xs font-mono bg-blue-500/10 border border-blue-500/30 text-blue-400">Web Application</span>
+                            <a href="https://github.com/sanjaykumar28-pixel" target="_blank" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-gray-400 hover:text-white transition-colors">
+                                <i data-lucide="github" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+
+                        <h3 class="text-xl sm:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                            Learning Management System (LMS)
+                        </h3>
+
+                        <p class="text-gray-400 text-sm sm:text-base leading-relaxed">
+                            Developed a web-based Learning Management System for academic activities, continuous student assessment, and course tracking.
+                        </p>
+
+                        <!-- Tech Badges -->
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-indigo-300 border border-slate-800">PHP</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-orange-300 border border-slate-800">MySQL</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-red-300 border border-slate-800">HTML5</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-blue-300 border border-slate-800">CSS3</span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-yellow-300 border border-slate-800">JavaScript</span>
+                        </div>
+
+                        <!-- Highlights -->
+                        <div class="space-y-2 pt-2">
+                            <h4 class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Key Technical Highlights</h4>
+                            <ul class="space-y-2 text-xs sm:text-sm text-gray-400">
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                    <span>Built modules to track student marks, attendance, assignment submissions, feedback, and academic performance.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="lock" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                    <span>Applied role-based access control (RBAC) to support controlled access across faculty and student users.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="layers" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                    <span>Structured relational database tables in MySQL to handle complex student profile and assessment data.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-900/60 border-t border-slate-800 text-xs text-gray-400 flex items-center justify-between">
+                        <span>PHP + MySQL Backend Application</span>
+                        <span class="text-blue-400 font-mono text-[11px]">Academic Project</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- INTERNSHIP EXPERIENCE SECTION -->
+        <section id="experience" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-purple-500/10 text-purple-400">
+                    <i data-lucide="briefcase" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Internship Experience</h2>
+                    <p class="text-sm text-gray-400">Industry exposure & practical engineering experience</p>
+                </div>
+            </div>
+
+            <div class="relative pl-6 sm:pl-8 border-l-2 border-slate-800 space-y-6">
+                <div class="relative group">
+                    <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-darkBg border-2 border-purple-500 group-hover:scale-125 transition-transform"></div>
+                    
+                    <div class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Python Intern</h3>
+                                <span class="text-base font-medium text-purple-400">RankBook</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20 w-fit">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Practical Internship
+                            </span>
+                        </div>
+
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check" class="w-4 h-4 text-purple-400 shrink-0 mt-1"></i>
+                                <span>Completed a Python internship focused on practical Python programming and backend development.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check" class="w-4 h-4 text-purple-400 shrink-0 mt-1"></i>
+                                <span>Applied programming concepts to real-world development tasks and strengthened backend development skills.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDUCATION SECTION -->
+        <section id="education" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Education</h2>
+                    <p class="text-sm text-gray-400">Academic qualifications & institutions</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Degree 1 -->
+                <div class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-4 hover:border-emerald-500/40 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">Postgraduate Degree</span>
+                        <span class="text-xs font-mono text-gray-400">2025 – 2027</span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Master of Computer Applications (MCA)</h3>
+                        <p class="text-sm text-emerald-400 font-medium">Maharaja Institute of Technology, Mysore</p>
+                    </div>
+
+                    <div class="pt-2 flex items-center justify-between text-xs text-gray-400 border-t border-slate-800/80">
+                        <span>Status: <strong class="text-white">Currently Pursuing</strong></span>
+                        <i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i>
+                    </div>
+                </div>
+
+                <!-- Degree 2 -->
+                <div class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-4 hover:border-cyan-500/40 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">Undergraduate Degree</span>
+                        <span class="text-xs font-mono text-gray-400">2022 – 2025</span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Bachelor of Computer Applications (BCA)</h3>
+                        <p class="text-sm text-cyan-400 font-medium">JSS College of Arts, Commerce and Science, Mysuru</p>
+                    </div>
+
+                    <div class="pt-2 flex items-center justify-between text-xs text-gray-400 border-t border-slate-800/80">
+                        <span>Academic Performance:</span>
+                        <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 font-bold text-xs">CGPA: 8.16 / 10</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CERTIFICATIONS SECTION -->
+        <section id="certifications" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-amber-500/10 text-amber-400">
+                    <i data-lucide="award" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Certifications</h2>
+                    <p class="text-sm text-gray-400">Verified credentials from technology leaders & universities</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- Cert 1 -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all space-y-4">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                            IBM
+                        </div>
+                        <h3 class="font-bold text-white text-base leading-snug">Object-Oriented Programming in Java</h3>
+                    </div>
+                    <div class="text-xs text-gray-400 pt-3 border-t border-slate-800 flex items-center justify-between">
+                        <span>Issuer: IBM</span>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                </div>
+
+                <!-- Cert 2 -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all space-y-4">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-red-600/10 border border-red-500/20 flex items-center justify-center text-red-400 font-bold">
+                            G
+                        </div>
+                        <h3 class="font-bold text-white text-base leading-snug">Using Python to Interact with the Operating System</h3>
+                    </div>
+                    <div class="text-xs text-gray-400 pt-3 border-t border-slate-800 flex items-center justify-between">
+                        <span>Issuer: Google</span>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                </div>
+
+                <!-- Cert 3 -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all space-y-4">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-600/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold">
+                            UMN
+                        </div>
+                        <h3 class="font-bold text-white text-base leading-snug">Software Development Lifecycle Specialization</h3>
+                    </div>
+                    <div class="text-xs text-gray-400 pt-3 border-t border-slate-800 flex items-center justify-between">
+                        <span>Univ. of Minnesota</span>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                </div>
+
+                <!-- Cert 4 -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all space-y-4">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                            IBM
+                        </div>
+                        <h3 class="font-bold text-white text-base leading-snug">Introduction to Web Development with HTML, CSS and JavaScript</h3>
+                    </div>
+                    <div class="text-xs text-gray-400 pt-3 border-t border-slate-800 flex items-center justify-between">
+                        <span>Issuer: IBM</span>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="scroll-mt-24 space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-cyan-500/10 text-cyan-400">
+                    <i data-lucide="mail" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Get In Touch</h2>
+                    <p class="text-sm text-gray-400">Connect for full-stack engineering roles, projects, or collaborations</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Info Box -->
+                <div class="lg:col-span-5 glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+                    <h3 class="text-xl font-bold text-white">Contact Information</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        I am actively seeking software engineer opportunities. Feel free to reach out via email, phone, or connect through LinkedIn and GitHub.
+                    </p>
+
+                    <div class="space-y-4 font-medium text-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 shrink-0">
+                                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 block">Location</span>
+                                <span class="text-gray-200">Mysuru, Karnataka, India</span>
+                            </div>
+                        </div>
+
+                        <a href="tel:+918660057906" class="flex items-start gap-3 group">
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-blue-400 group-hover:border-cyan-500 transition-colors shrink-0">
+                                <i data-lucide="phone" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 block">Phone</span>
+                                <span class="text-gray-200 group-hover:text-cyan-400 transition-colors">+91 86600 57906</span>
+                            </div>
+                        </a>
+
+                        <a href="mailto:sanjaykumarmm28@gmail.com" class="flex items-start gap-3 group">
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-indigo-400 group-hover:border-cyan-500 transition-colors shrink-0">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 block">Email Address</span>
+                                <span class="text-gray-200 group-hover:text-cyan-400 transition-colors">sanjaykumarmm28@gmail.com</span>
+                            </div>
+                        </a>
+
+                        <a href="https://github.com/sanjaykumar28-pixel" target="_blank" class="flex items-start gap-3 group">
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-gray-300 group-hover:border-cyan-500 transition-colors shrink-0">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 block">GitHub</span>
+                                <span class="text-gray-200 group-hover:text-cyan-400 transition-colors">github.com/sanjaykumar28-pixel</span>
+                            </div>
+                        </a>
+
+                        <a href="https://linkedin.com/in/sanjaykumarm28" target="_blank" class="flex items-start gap-3 group">
+                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-blue-400 group-hover:border-cyan-500 transition-colors shrink-0">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 block">LinkedIn</span>
+                                <span class="text-gray-200 group-hover:text-cyan-400 transition-colors">linkedin.com/in/sanjaykumarm28</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Form Box -->
+                <div class="lg:col-span-7 glass-card p-6 sm:p-8 rounded-2xl border border-slate-800">
+                    <form id="contact-form" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="name" class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Your Name</label>
+                                <input type="text" id="name" required placeholder="John Doe" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Your Email</label>
+                                <input type="email" id="email" required placeholder="john@example.com" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="subject" class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Subject</label>
+                            <input type="text" id="subject" required placeholder="Full-Stack Developer Role / Project Discussion" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="message" class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Message</label>
+                            <textarea id="message" rows="4" required placeholder="Write your message here..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 px-6 rounded-xl font-semibold text-sm text-black bg-gradient-to-r from-accentCyan to-accentBlue hover:opacity-95 transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            Send Message
+                        </button>
+
+                        <div id="form-status" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 border-t border-slate-800 bg-cardBg py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-white text-sm">Sanjay Kumar M</span>
+                <span class="text-gray-500 text-sm">| Full-Stack Developer</span>
+            </div>
+            <p class="text-xs text-gray-400">
+                &copy; 2026 Sanjay Kumar M. All rights reserved.
+            </p>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/sanjaykumar28-pixel" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="github" class="w-4 h-4"></i>
+                </a>
+                <a href="https://linkedin.com/in/sanjaykumarm28" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="linkedin" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT LOGIC & THREE.JS ENGINE -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        /* =============================================================
+           0. STEP-BY-STEP PRELOADER LOGIC & TYPING ANIMATION
+           ============================================================= */
+        const nameText = "Sanjay Kumar M";
+        const nameContainer = document.getElementById('name-container');
+        const preloader = document.getElementById('preloader');
+        const loaderBar = document.getElementById('loader-bar');
+        const loaderPercentage = document.getElementById('loader-percentage');
+        const loaderStatusText = document.getElementById('loader-status-text');
+        const loaderLogo = document.getElementById('loader-logo');
+        const loaderRole = document.getElementById('loader-role');
+        const loaderSteps = document.getElementById('loader-steps');
+
+        // Render letter spans in container
+        nameText.split('').forEach((char) => {
+            const span = document.createElement('span');
+            if (char === ' ') {
+                span.innerHTML = '&nbsp;';
+                span.className = 'w-2 sm:w-3';
+            } else {
+                span.textContent = char;
+                span.className = 'name-letter';
+            }
+            nameContainer.appendChild(span);
+        });
+
+        const nameLetters = document.querySelectorAll('.name-letter');
+
+        // Preloader steps timeline
+        function runPreloaderTimeline() {
+            // Step 1: Reveal Logo
+            setTimeout(() => {
+                loaderLogo.classList.remove('opacity-0', 'scale-75');
+                loaderLogo.classList.add('opacity-100', 'scale-100');
+            }, 100);
+
+            // Step 2: Animate Name Step-by-Step (letter-by-letter)
+            let letterIndex = 0;
+            const letterInterval = setInterval(() => {
+                if (letterIndex < nameLetters.length) {
+                    nameLetters[letterIndex].classList.add('visible');
+                    letterIndex++;
+                } else {
+                    clearInterval(letterInterval);
+                }
+            }, 90);
+
+            // Step 3: Show Role Title & Steps row
+            setTimeout(() => {
+                loaderRole.classList.remove('opacity-0');
+                loaderRole.classList.add('opacity-100');
+                loaderSteps.classList.remove('opacity-0');
+                loaderSteps.classList.add('opacity-100');
+            }, 1200);
+
+            // Step 4: Progress bar and status updates
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 4) + 2;
+                if (progress > 100) progress = 100;
+
+                loaderBar.style.width = `${progress}%`;
+                loaderPercentage.textContent = `${progress}%`;
+
+                // Update Status Text based on progress checkpoints
+                if (progress < 35) {
+                    loaderStatusText.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> Compiling Developer Profile...`;
+                    document.getElementById('step-1').classList.add('text-cyan-400');
+                } else if (progress < 75) {
+                    loaderStatusText.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span> Initializing 3D Graphics Engine...`;
+                    document.getElementById('step-2').classList.add('text-cyan-400');
+                } else if (progress < 100) {
+                    loaderStatusText.innerHTML = `<span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span> Rendering Portfolio Modules...`;
+                    document.getElementById('step-3').classList.add('text-cyan-400');
+                } else {
+                    loaderStatusText.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> System Ready. Welcome!`;
+                    clearInterval(progressInterval);
+
+                    // Fade out loader and smoothly reveal main interface
+                    setTimeout(() => {
+                        preloader.classList.add('opacity-0', 'pointer-events-none');
+                        setTimeout(() => {
+                            preloader.style.display = 'none';
+                        }, 700);
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        // Mobile Drawer Toggle Logic
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Navigation Highlight on Scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        function highlightNavOnScroll() {
+            const scrollY = window.pageYOffset;
+
+            sections.forEach(current => {
+                const sectionHeight = current.offsetHeight;
+                const sectionTop = current.offsetTop - 120;
+                const sectionId = current.getAttribute('id');
+
+                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('text-cyan-400', 'bg-white/5');
+                        } else {
+                            link.classList.remove('text-cyan-400', 'bg-white/5');
+                        }
+                    });
+                }
+            });
+        }
+
+        window.addEventListener('scroll', highlightNavOnScroll);
+
+        // Contact Form Submission
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            
+            formStatus.className = 'p-4 rounded-xl text-sm font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400';
+            formStatus.innerHTML = `Thank you, <strong>${name}</strong>! Your message has been received successfully. I will get back to you shortly.`;
+            formStatus.classList.remove('hidden');
+
+            contactForm.reset();
+            setTimeout(() => formStatus.classList.add('hidden'), 6000);
+        });
+
+        /* =============================================================
+           1. LIVE INTERACTIVE BACKGROUND CANVAS (Node Network & Physics)
+           ============================================================= */
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeBgCanvas() {
+            width = bgCanvas.width = window.innerWidth;
+            height = bgCanvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        window.addEventListener('resize', resizeBgCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.2;
+                this.vy = (Math.random() - 0.5) * 1.2;
+                this.radius = Math.random() * 2 + 1;
+                this.baseAlpha = Math.random() * 0.4 + 0.2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const angle = Math.atan2(dy, dx);
+                        this.x -= Math.cos(angle) * force * 2.5;
+                        this.y -= Math.sin(angle) * force * 2.5;
+                    }
+                }
+            }
+
+            draw() {
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = `rgba(6, 182, 212, ${this.baseAlpha})`;
+                bgCtx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor((width * height) / 13000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 125) {
+                        bgCtx.beginPath();
+                        bgCtx.moveTo(particles[i].x, particles[i].y);
+                        bgCtx.lineTo(particles[j].x, particles[j].y);
+                        const alpha = (1 - dist / 125) * 0.22;
+                        bgCtx.strokeStyle = `rgba(59, 130, 246, ${alpha})`;
+                        bgCtx.lineWidth = 0.8;
+                        bgCtx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateBg);
+        }
+
+        resizeBgCanvas();
+        animateBg();
+
+        /* =============================================================
+           2. ULTRA-DETAILED ROUNDED HUMANOID ROBOT (THREE.JS)
+           ============================================================= */
+        function initRoundedRobot3D() {
+            const container = document.getElementById('robot-3d-container');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 0, 9.2);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Studio Lighting Setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0x06b6d4, 2.5);
+            dirLight1.position.set(5, 8, 5);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x3b82f6, 2.0);
+            dirLight2.position.set(-5, -3, 4);
+            scene.add(dirLight2);
+
+            const rimLight = new THREE.PointLight(0xffffff, 2, 15);
+            rimLight.position.set(0, 4, -4);
+            scene.add(rimLight);
+
+            // Master Robot Assembly Group
+            const robotGroup = new THREE.Group();
+            scene.add(robotGroup);
+
+            // Metallic & Glossy Materials
+            const bodyGlossyMaterial = new THREE.MeshStandardMaterial({
+                color: 0x1e293b,
+                roughness: 0.15,
+                metalness: 0.85
+            });
+
+            const accentChromeMaterial = new THREE.MeshStandardMaterial({
+                color: 0x475569,
+                roughness: 0.1,
+                metalness: 0.95
+            });
+
+            const darkJointMaterial = new THREE.MeshStandardMaterial({
+                color: 0x0f172a,
+                roughness: 0.3,
+                metalness: 0.9
+            });
+
+            const cyanGlowMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
+            const blueGlowMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6 });
+
+            // --- 1. HEAD (Sleek Round Helmet with Curved Visor) ---
+            const headGroup = new THREE.Group();
+            headGroup.position.y = 2.45;
+
+            // Rounded Head Base (Sphere)
+            const headSphere = new THREE.Mesh(new THREE.SphereGeometry(0.55, 32, 32), bodyGlossyMaterial);
+            headSphere.scale.set(1.0, 0.95, 0.95);
+            headGroup.add(headSphere);
+
+            // Curved Glowing Visor
+            const visorGeo = new THREE.SphereGeometry(0.48, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.35);
+            const visorMat = new THREE.MeshStandardMaterial({ color: 0x030712, roughness: 0.05, metalness: 0.95 });
+            const visorMesh = new THREE.Mesh(visorGeo, visorMat);
+            visorMesh.rotation.x = Math.PI / 2.3;
+            visorMesh.position.set(0, 0.02, 0.12);
+            headGroup.add(visorMesh);
+
+            // Glowing Eyes (Rounded Spheres)
+            const eyeGeo = new THREE.SphereGeometry(0.07, 16, 16);
+            const leftEye = new THREE.Mesh(eyeGeo, cyanGlowMat);
+            leftEye.position.set(-0.18, 0.04, 0.46);
+            headGroup.add(leftEye);
+
+            const rightEye = new THREE.Mesh(eyeGeo, cyanGlowMat);
+            rightEye.position.set(0.2, 0.04, 0.46);
+            headGroup.add(rightEye);
+
+            // Ear Node Caps (Rounded Discs)
+            const earGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.08, 24);
+            const earL = new THREE.Mesh(earGeo, accentChromeMaterial);
+            earL.rotation.z = Math.PI / 2;
+            earL.position.set(-0.55, 0, 0);
+            headGroup.add(earL);
+
+            const earR = new THREE.Mesh(earGeo, accentChromeMaterial);
+            earR.rotation.z = Math.PI / 2;
+            earR.position.set(0.55, 0, 0);
+            headGroup.add(earR);
+
+            robotGroup.add(headGroup);
+
+            // --- 2. NECK (Smooth Rounded Cylinder & Rings) ---
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.3, 24), darkJointMaterial);
+            neck.position.y = 1.85;
+            robotGroup.add(neck);
+
+            // --- 3. TORSO (Rounded Smooth Capsule & Glowing Chest Reactor) ---
+            const torsoGroup = new THREE.Group();
+
+            // Smooth Rounded Chest (Sphere & Capsule Hybrid)
+            const chestMesh = new THREE.Mesh(new THREE.SphereGeometry(0.85, 32, 32), bodyGlossyMaterial);
+            chestMesh.scale.set(1.0, 0.9, 0.75);
+            chestMesh.position.y = 1.15;
+            torsoGroup.add(chestMesh);
+
+            // Arc Reactor Ring (Chest Center)
+            const arcRing = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.04, 16, 32), cyanGlowMat);
+            arcRing.position.set(0, 1.25, 0.62);
+            torsoGroup.add(arcRing);
+
+            const arcCore = new THREE.Mesh(new THREE.SphereGeometry(0.14, 24, 24), blueGlowMat);
+            arcCore.position.set(0, 1.25, 0.58);
+            torsoGroup.add(arcCore);
+
+            // Waist / Abdomen Spherical Joints
+            const waistJoint = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 24), darkJointMaterial);
+            waistJoint.position.y = 0.45;
+            torsoGroup.add(waistJoint);
+
+            // Pelvic Hip Capsule
+            const hipMesh = new THREE.Mesh(new THREE.SphereGeometry(0.65, 32, 32), bodyGlossyMaterial);
+            hipMesh.scale.set(1.1, 0.55, 0.8);
+            hipMesh.position.y = 0.05;
+            torsoGroup.add(hipMesh);
+
+            robotGroup.add(torsoGroup);
+
+            // --- 4. ARMS & HANDS (Left & Right - Capsule & Spherical Shapes) ---
+            // Left Arm
+            const leftArmGroup = new THREE.Group();
+            leftArmGroup.position.set(-0.95, 1.5, 0);
+
+            const shoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 24), accentChromeMaterial);
+            leftArmGroup.add(shoulderL);
+
+            // Upper Arm (Rounded Cylinder with Spherical Ends)
+            const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.75, 24), bodyGlossyMaterial);
+            upperArmL.position.y = -0.45;
+            leftArmGroup.add(upperArmL);
+
+            const elbowL = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 24), cyanGlowMat);
+            elbowL.position.y = -0.88;
+            leftArmGroup.add(elbowL);
+
+            const lowerArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.75, 24), bodyGlossyMaterial);
+            lowerArmL.position.y = -1.3;
+            leftArmGroup.add(lowerArmL);
+
+            const handL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 24, 24), accentChromeMaterial);
+            handL.scale.set(0.9, 1.3, 0.7);
+            handL.position.y = -1.75;
+            leftArmGroup.add(handL);
+
+            robotGroup.add(leftArmGroup);
+
+            // Right Arm (Animated Wave Gesture)
+            const rightArmGroup = new THREE.Group();
+            rightArmGroup.position.set(0.95, 1.5, 0);
+
+            const shoulderR = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 24), accentChromeMaterial);
+            rightArmGroup.add(shoulderR);
+
+            const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.75, 24), bodyGlossyMaterial);
+            upperArmR.position.y = -0.45;
+            rightArmGroup.add(upperArmR);
+
+            const elbowR = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 24), cyanGlowMat);
+            elbowR.position.y = -0.88;
+            rightArmGroup.add(elbowR);
+
+            const lowerArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.75, 24), bodyGlossyMaterial);
+            lowerArmR.position.y = -1.3;
+            rightArmGroup.add(lowerArmR);
+
+            const handR = new THREE.Mesh(new THREE.SphereGeometry(0.14, 24, 24), accentChromeMaterial);
+            handR.scale.set(0.9, 1.3, 0.7);
+            handR.position.y = -1.75;
+            rightArmGroup.add(handR);
+
+            robotGroup.add(rightArmGroup);
+
+            // --- 5. LEGS & FEET (Left & Right - Smooth Spherical/Capsule Shapes) ---
+            // Left Leg
+            const leftLegGroup = new THREE.Group();
+            leftLegGroup.position.set(-0.42, -0.2, 0);
+
+            const hipJointL = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), darkJointMaterial);
+            leftLegGroup.add(hipJointL);
+
+            const thighL = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.16, 0.95, 24), bodyGlossyMaterial);
+            thighL.position.y = -0.58;
+            leftLegGroup.add(thighL);
+
+            const kneeL = new THREE.Mesh(new THREE.SphereGeometry(0.18, 24, 24), blueGlowMat);
+            kneeL.position.y = -1.1;
+            leftLegGroup.add(kneeL);
+
+            const shinL = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.95, 24), bodyGlossyMaterial);
+            shinL.position.y = -1.62;
+            leftLegGroup.add(shinL);
+
+            // Rounded Foot Capsule
+            const footL = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 24), accentChromeMaterial);
+            footL.scale.set(0.9, 0.65, 1.8);
+            footL.position.set(0, -2.15, 0.12);
+            leftLegGroup.add(footL);
+
+            robotGroup.add(leftLegGroup);
+
+            // Right Leg
+            const rightLegGroup = new THREE.Group();
+            rightLegGroup.position.set(0.42, -0.2, 0);
+
+            const hipJointR = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), darkJointMaterial);
+            rightLegGroup.add(hipJointR);
+
+            const thighR = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.16, 0.95, 24), bodyGlossyMaterial);
+            thighR.position.y = -0.58;
+            rightLegGroup.add(thighR);
+
+            const kneeR = new THREE.Mesh(new THREE.SphereGeometry(0.18, 24, 24), blueGlowMat);
+            kneeR.position.y = -1.1;
+            rightLegGroup.add(kneeR);
+
+            const shinR = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.95, 24), bodyGlossyMaterial);
+            shinR.position.y = -1.62;
+            rightLegGroup.add(shinR);
+
+            const footR = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 24), accentChromeMaterial);
+            footR.scale.set(0.9, 0.65, 1.8);
+            footR.position.set(0, -2.15, 0.12);
+            rightLegGroup.add(footR);
+
+            robotGroup.add(rightLegGroup);
+
+            // --- 6. FLOATING HOLOGRAPHIC ORBIT RINGS ---
+            const orbitRing1 = new THREE.Mesh(
+                new THREE.TorusGeometry(2.1, 0.015, 16, 64),
+                new THREE.MeshBasicMaterial({ color: 0x06b6d4, wireframe: true, transparent: true, opacity: 0.6 })
+            );
+            orbitRing1.rotation.x = Math.PI / 2.2;
+            orbitRing1.position.y = 0.4;
+            robotGroup.add(orbitRing1);
+
+            const orbitRing2 = new THREE.Mesh(
+                new THREE.TorusGeometry(2.5, 0.012, 16, 64),
+                new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.4 })
+            );
+            orbitRing2.rotation.x = Math.PI / 1.7;
+            orbitRing2.position.y = 0.4;
+            robotGroup.add(orbitRing2);
+
+            robotGroup.position.y = -0.15;
+
+            // Mouse Motion Interactivity
+            let targetMouseX = 0;
+            let targetMouseY = 0;
+
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                targetMouseX = (x / container.clientWidth) * 2 - 1;
+                targetMouseY = -(y / container.clientHeight) * 2 + 1;
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // Natural Animation Loop
+            let clock = new THREE.Clock();
+
+            function renderRobotFrame() {
+                requestAnimationFrame(renderRobotFrame);
+                const elapsedTime = clock.getElapsedTime();
+
+                // 1. Hover Float
+                robotGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.15 - 0.15;
+
+                // 2. Hologram Orbiting
+                orbitRing1.rotation.z = elapsedTime * 0.45;
+                orbitRing2.rotation.z = -elapsedTime * 0.28;
+
+                // 3. Right Arm Friendly Greeting Wave
+                rightArmGroup.rotation.z = -Math.sin(elapsedTime * 2.5) * 0.25 - 0.55;
+                rightArmGroup.rotation.x = Math.cos(elapsedTime * 2) * 0.15;
+
+                // 4. Left Arm Subtle Idle Counter-balance
+                leftArmGroup.rotation.z = Math.sin(elapsedTime * 1.5) * 0.08 + 0.1;
+
+                // 5. Natural Dangling Legs
+                leftLegGroup.rotation.x = Math.sin(elapsedTime * 1.5) * 0.06;
+                rightLegGroup.rotation.x = -Math.sin(elapsedTime * 1.5) * 0.06;
+
+                // 6. Smooth Mouse Look Tracking
+                headGroup.rotation.y += (targetMouseX * 0.7 - headGroup.rotation.y) * 0.08;
+                headGroup.rotation.x += (-targetMouseY * 0.35 - headGroup.rotation.x) * 0.08;
+                robotGroup.rotation.y += (targetMouseX * 0.35 - robotGroup.rotation.y) * 0.05;
+
+                // 7. Arc Reactor Core Pulsing Glow Effect
+                const pulseScale = 1 + Math.sin(elapsedTime * 4.5) * 0.1;
+                arcCore.scale.set(pulseScale, pulseScale, pulseScale);
+
+                renderer.render(scene, camera);
+            }
+
+            renderRobotFrame();
+        }
+
+        // Initialize on DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            runPreloaderTimeline();
+            initRoundedRobot3D();
+        });
+    </script>
+</body>
+</html>
